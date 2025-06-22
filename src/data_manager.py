@@ -104,3 +104,13 @@ class DataManager:
         cleaned['is_valid'] = True
         
         return cleaned
+    
+    def is_valid_record(self, record: Dict[str, Any]) -> bool:
+        data_fields = {k: v for k, v in record.items() 
+                    if k not in ['record_id', 'is_valid']}
+        
+        non_null_count = sum(1 for v in data_fields.values() if v is not None)
+
+        min_required = max(1, len(data_fields) // 2)
+        
+        return non_null_count >= min_required
