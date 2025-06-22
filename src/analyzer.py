@@ -77,4 +77,33 @@ class SurveyAnalyzer:
             
         return analysis
     
+    def determine_data_type(self, values: List[Any]) -> str:
+
+        if not values:
+            return 'unknown'
+            
+        numeric_count = 0
+        text_length_total = 0
+        
+        # Iterate through values to classify (LO3 - repetition)
+        for value in values:
+            try:
+                # Try to convert to number
+                float(str(value))
+                numeric_count += 1
+            except (ValueError, TypeError):
+                # Track text length for classification
+                text_length_total += len(str(value))
+        
+        numeric_ratio = numeric_count / len(values)
+        avg_text_length = text_length_total / len(values) if values else 0
+        
+        # Classification logic using selection (LO3)
+        if numeric_ratio >= self.numeric_threshold:
+            return 'numeric'
+        elif avg_text_length > 50:  # Arbitrary threshold for long text
+            return 'text'
+        else:
+            return 'categorical'
+    
 
