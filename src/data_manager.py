@@ -185,4 +185,16 @@ class DataManager:
         ]
         
         return sample_data
+    
+    def get_data_info(self) -> Dict[str, Any]:
 
+        if not self.current_data:
+            return {'error': 'No data loaded'}
+            
+        info = {
+            'total_records': len(self.current_data),
+            'columns': list(self.current_data[0].keys()) if self.current_data else [],
+            'sample_record': self.current_data[0] if self.current_data else None
+        }
+        
+        return info
