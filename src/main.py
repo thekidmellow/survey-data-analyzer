@@ -52,3 +52,34 @@ class SurveyDataApp:
         except Exception as e:
             print(f"{Fore.RED}An unexpected error occurred: {str(e)}{Style.RESET_ALL}")
             self.exit_application()
+
+    def show_welcome(self):
+        """
+        Display welcome message...
+        """
+        clear_screen()
+        print_header("SURVEY DATA ANALYZER", "=")
+        print(f"{Fore.CYAN}Welcome to the Survey Data Analyzer!{Style.RESET_ALL}")
+        print()
+        print("This application helps you:")
+        print("• Import survey data from CSV files")
+        print("• Perform statistical analysis on responses")
+        print("• Generate visualizations and insights")
+        print("• Export professional reports")
+        print()
+        print(f"{Fore.GREEN}Ready to analyze your survey data!{Style.RESET_ALL}")
+        input("\nPress Enter to continue...")
+
+    def show_main_menu(self):
+        """
+        Display the main application menu...
+        """
+        clear_screen()
+        print_header("MAIN MENU", "-")
+        print("1. Import Survey Data")
+        print("2. Analyze Data")
+        print("3. Generate Visualizations")
+        print("4. Export Results")
+        print("5. View Data Summary")
+        print("6. Exit")
+        print()
