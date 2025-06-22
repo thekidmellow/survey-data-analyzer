@@ -11,3 +11,12 @@ from utils import clear_screen, print_header, get_user_choice
 init()
 
 class SurveyDataApp:
+
+def __init__(self):
+    """
+    Initialize the Survey Data Analyzer application.
+    """
+    self.data_manager = DataManager()
+    self.analyzer = SurveyAnalyzer()
+    self.visualizer = DataVisualizer()
+    self.current_dataset = None
