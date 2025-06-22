@@ -57,4 +57,24 @@ class SurveyAnalyzer:
 
         stats['column_analysis'] = column_stats
         return stats
+    
+    def analyze_column(self, column_name: str, values: List[Any]) -> Dict[str, Any]:
+
+        analysis = {
+            'name': column_name,
+            'total_values': len(values),
+            'unique_values': len(set(str(v) for v in values)),
+            'data_type': self.determine_data_type(values)
+        }
+        
+        # Perform type-specific analysis using selection (LO3)
+        if analysis['data_type'] == 'numeric':
+            analysis.update(self.analyze_numeric_column(values))
+        elif analysis['data_type'] == 'categorical':
+            analysis.update(self.analyze_categorical_column(values))
+        elif analysis['data_type'] == 'text':
+            analysis.update(self.analyze_text_column(values))
+            
+        return analysis
+    
 
