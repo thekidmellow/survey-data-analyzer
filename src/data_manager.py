@@ -81,3 +81,26 @@ class DataManager:
             raise ValueError("No valid records found in the dataset")
             
         return validated_records
+    
+    def clean_record(self, record: Dict[str, Any], record_num: int) -> Dict[str, Any]:
+        cleaned = {}
+        
+        for key, value in record.items():
+            # Standardize column names
+            clean_key = str(key).strip().lower().replace(' ', '_')
+            
+            # Handle different data types appropriately
+            if pd.isna(value) or value == '':
+                cleaned[clean_key] = None
+            elif isinstance(value, str):
+                # Clean string values
+                cleaned[clean_key] = str(value).strip()
+            else:
+                # Keep numeric and other types as-is
+                cleaned[clean_key] = value
+                
+        # Add metadata
+        cleaned['record_id'] = record_num
+        cleaned['is_valid'] = True
+        
+        return cleaned
