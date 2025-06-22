@@ -83,3 +83,52 @@ class SurveyDataApp:
         print("5. View Data Summary")
         print("6. Exit")
         print()
+
+    def import_data(self):
+        """
+        Handle data import functionality...
+        """
+        clear_screen()
+        print_header("IMPORT SURVEY DATA", "-")
+        
+        try:
+            print("Choose import method:")
+            print("1. Import from CSV file")
+            print("2. Enter data manually")
+            print("3. Load sample dataset")
+            
+            choice = get_user_choice("Select option (1-3): ", 1, 3)
+
+            if choice == 1:
+                self.import_from_csv()
+            elif choice == 2:
+                self.import_manual_data()
+            elif choice == 3:
+                self.load_sample_data()
+
+        except Exception as e:
+            print(f"{Fore.RED}Error during data import: {str(e)}{Style.RESET_ALL}")
+            input("Press Enter to continue...")  
+
+    def import_from_csv(self):
+        """
+        Import survey data from a CSV file...
+        """
+        file_path = input("Enter the path to your CSV file: ").strip()
+
+        if not file_path:
+            print(f"{Fore.YELLOW}No file path provided.{Style.RESET_ALL}")
+            return
+            
+        try:
+            # Attempt to load data using the data manager
+            self.current_dataset = self.data_manager.load_csv(file_path)
+            print(f"{Fore.GREEN}✓ Successfully imported data from {file_path}{Style.RESET_ALL}")
+            print(f"Dataset contains {len(self.current_dataset)} records")
+            
+        except FileNotFoundError:
+            print(f"{Fore.RED}✗ File not found: {file_path}{Style.RESET_ALL}")
+        except Exception as e:
+            print(f"{Fore.RED}✗ Error loading file: {str(e)}{Style.RESET_ALL}")
+            
+        input("\nPress Enter to continue...")             
