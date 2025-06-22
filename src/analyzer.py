@@ -105,5 +105,33 @@ class SurveyAnalyzer:
             return 'text'
         else:
             return 'categorical'
-    
+        
+    def analyze_numeric_column(self, values: List[Any]) -> Dict[str, Any]:
 
+        numeric_values = []
+        for value in values:
+            try:
+                numeric_values.append(float(value))
+            except (ValueError, TypeError):
+                continue
+        
+        if not numeric_values:
+            return {'error': 'No valid numeric values found'}
+
+        return {
+            'mean': round(statistics.mean(numeric_values), 2),
+            'median': round(statistics.median(numeric_values), 2),
+            'mode': self.safe_mode(numeric_values),
+            'std_dev': round(statistics.stdev(numeric_values), 2) if len(numeric_values) > 1 else 0,
+            'min_value': min(numeric_values),
+            'max_value': max(numeric_values),
+            'range': max(numeric_values) - min(numeric_values)
+        }
+    
+    def safe_mode(self, values: List[float]) -> float:
+
+        try:
+            return round(statistics.mode(values), 2)
+        except statistics.StatisticsError:
+            # Return mean when no unique mode exists
+            return round(statistics.mean(values), 2)
