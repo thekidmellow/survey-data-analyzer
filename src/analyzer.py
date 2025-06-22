@@ -34,4 +34,27 @@ class SurveyAnalyzer:
         # Store results for later use
         self.analysis_results = analysis_results
         
-        return analysis_results   
+        return analysis_results
+    
+    def calculate_basic_statistics(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Calculate basic statistical measures for the dataset.
+        """
+        stats = {
+            'total_responses': len(data),
+            'response_rate': '100%',
+            'column_count': len(data[0].keys()) if data else 0
+        }
+
+        column_stats = {}
+    
+        for column in data[0].keys():
+            column_values = [record.get(column) for record in data if record.get(column) is not None]
+        
+            if column_values:
+                column_info = self.analyze_column(column, column_values)
+                column_stats[column] = column_info
+
+        stats['column_analysis'] = column_stats
+        return stats
+
