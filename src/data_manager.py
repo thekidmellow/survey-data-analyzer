@@ -114,3 +114,22 @@ class DataManager:
         min_required = max(1, len(data_fields) // 2)
         
         return non_null_count >= min_required
+    
+    def export_to_csv(self, data: List[Dict[str, Any]], filename: str) -> bool:
+        try:
+            # Convert to DataFrame for easy CSV export
+            df = pd.DataFrame(data)
+            
+            # Ensure output directory exists
+            output_path = Path(filename)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            # Export to CSV
+            df.to_csv(filename, index=False)
+            
+            print(f"{Fore.GREEN}✓ Data exported to {filename}{Style.RESET_ALL}")
+            return True
+            
+        except Exception as e:
+            print(f"{Fore.RED}✗ Export failed: {str(e)}{Style.RESET_ALL}")
+            return False
