@@ -131,4 +131,50 @@ class SurveyDataApp:
         except Exception as e:
             print(f"{Fore.RED}✗ Error loading file: {str(e)}{Style.RESET_ALL}")
             
-        input("\nPress Enter to continue...")             
+        input("\nPress Enter to continue...")
+
+    def analyze_data(self):
+        """
+        Perform statistical analysis...
+        """
+        if not self.current_dataset:
+            print(f"{Fore.YELLOW}No data loaded. Please import data first.{Style.RESET_ALL}")
+            input("Press Enter to continue...")
+            return
+            
+        clear_screen()
+        print_header("DATA ANALYSIS", "-")
+        
+        try:
+            results = self.analyzer.analyze_dataset(self.current_dataset)
+            self.display_analysis_results(results)
+
+        except Exception as e:
+            print(f"{Fore.RED}Error during analysis: {str(e)}{Style.RESET_ALL}")
+            
+        input("\nPress Enter to continue...")
+    
+    def display_analysis_results(self, results):
+        """
+        Display analysis results...
+        """
+        print(f"{Fore.GREEN}ANALYSIS RESULTS:{Style.RESET_ALL}")
+        print("=" * 50)
+        
+        for section, data in results.items():
+            print(f"\n{Fore.CYAN}{section.upper()}:{Style.RESET_ALL}")
+            if isinstance(data, dict):
+                for key, value in data.items():
+                    print(f"  {key}: {value}")
+            else:
+                print(f"  {data}")
+
+    def exit_application(self):
+        """
+        Clean exit from the application...
+        """
+        clear_screen()
+        print(f"{Fore.GREEN}Thank you for using Survey Data Analyzer!{Style.RESET_ALL}")
+        print("Remember to commit your work to GitHub!")
+        print("\nGoodbye! 👋")
+            
