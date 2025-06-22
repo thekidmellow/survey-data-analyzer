@@ -177,4 +177,20 @@ class SurveyDataApp:
         print(f"{Fore.GREEN}Thank you for using Survey Data Analyzer!{Style.RESET_ALL}")
         print("Remember to commit your work to GitHub!")
         print("\nGoodbye! 👋")
-            
+
+
+def main():
+    """
+    Application entry point that initializes and runs the main application.
+    
+    This function serves as the primary entry point, demonstrating
+    proper program structure and initialization (LO1).
+    """
+    # Create and run the application instance
+    app = SurveyDataApp()
+    app.run()
+
+
+# Standard Python idiom for running the script directly
+if __name__ == "__main__":
+    main()
