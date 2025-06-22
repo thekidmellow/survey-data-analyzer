@@ -53,3 +53,31 @@ class DataManager:
         except Exception as e:
             raise ValueError(f"Unexpected error loading CSV: {str(e)}")
     
+    def validate_survey_data(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        validated_records = []
+        errors_found = 0
+        
+        for i, record in enumerate(data):
+            try:
+                # Create a cleaned version of the record
+                cleaned_record = self.clean_record(record, i + 1)
+                
+                # Only add if record has meaningful data
+                if self.is_valid_record(cleaned_record):
+                    validated_records.append(cleaned_record)
+                else:
+                    errors_found += 1
+                    
+            except Exception as e:
+                print(f"{Fore.YELLOW}Warning: Skipping invalid record {i + 1}: {str(e)}{Style.RESET_ALL}")
+                errors_found += 1
+                continue
+        
+        # Report validation results
+        if errors_found > 0:
+            print(f"{Fore.YELLOW}⚠ Skipped {errors_found} invalid records{Style.RESET_ALL}")
+            
+        if not validated_records:
+            raise ValueError("No valid records found in the dataset")
+            
+        return validated_records
