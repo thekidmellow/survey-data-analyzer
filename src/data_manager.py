@@ -133,3 +133,56 @@ class DataManager:
         except Exception as e:
             print(f"{Fore.RED}✗ Export failed: {str(e)}{Style.RESET_ALL}")
             return False
+        
+    def create_sample_dataset(self) -> List[Dict[str, Any]]:
+        # Provide hardcoded sample survey data for testing
+        sample_data = [
+            {
+                'respondent_id': 1,
+                'age': 25,
+                'gender': 'Female',
+                'satisfaction': 'Very Satisfied',
+                'rating': 9,
+                'would_recommend': 'Yes',
+                'comments': 'Great service!'
+            },
+            {
+                'respondent_id': 2,
+                'age': 34,
+                'gender': 'Male',
+                'satisfaction': 'Satisfied',
+                'rating': 7,
+                'would_recommend': 'Yes',
+                'comments': 'Good overall experience'
+            },
+            {
+                'respondent_id': 3,
+                'age': 42,
+                'gender': 'Female',
+                'satisfaction': 'Neutral',
+                'rating': 5,
+                'would_recommend': 'Maybe',
+                'comments': 'Average service'
+            },
+            {
+                'respondent_id': 4,
+                'age': 28,
+                'gender': 'Male',
+                'satisfaction': 'Dissatisfied',
+                'rating': 3,
+                'would_recommend': 'No',
+                'comments': 'Could be better'
+            },
+            {
+                'respondent_id': 5,
+                'age': 31,
+                'gender': 'Female',
+                'satisfaction': 'Very Satisfied',
+                'rating': 10,
+                'would_recommend': 'Yes',
+                'comments': 'Excellent!'
+            }
+        ]
+        
+        return sample_data
+
