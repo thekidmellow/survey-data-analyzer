@@ -198,3 +198,60 @@ class SurveyAnalyzer:
             completion_rates[column] = completion_rate
         
         return completion_rates 
+    
+    def analyze_satisfaction_metrics(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        satisfaction_keywords = ['satisfaction', 'rating', 'score', 'recommend']
+        satisfaction_results = {}
+        
+        # Find satisfaction-related columns using pattern matching
+        satisfaction_columns = []
+        for column in data[0].keys() if data else []:
+            if any(keyword in str(column).lower() for keyword in satisfaction_keywords):
+                satisfaction_columns.append(column)
+        
+        # Analyze each satisfaction metric
+        for column in satisfaction_columns:
+            values = [record.get(column) for record in data if record.get(column) is not None]
+            if values:
+                satisfaction_results[column] = self.analyze_satisfaction_column(column, values)
+        
+        return satisfaction_results
+    
+    def analyze_satisfaction_column(self, column_name: str, values: List[Any]) -> Dict[str, Any]:
+        analysis = {'column': column_name}
+        
+        # Try numeric analysis first
+        numeric_values = []
+        for value in values:
+            try:
+                numeric_values.append(float(value))
+            except (ValueError, TypeError):
+                continue
+        
+        if numeric_values:
+            # Numeric satisfaction analysis
+            analysis.update({
+                'average_score': round(statistics.mean(numeric_values), 2),
+                'satisfaction_level': self.categorize_satisfaction_score(statistics.mean(numeric_values)),
+                'distribution': self.create_satisfaction_distribution(numeric_values)
+            })
+        else:
+            # Categorical satisfaction analysis
+            analysis.update({
+                'response_distribution': Counter(str(v) for v in values),
+                'most_common_response': Counter(str(v) for v in values).most_common(1)[0] if values else None
+            })
+        
+        return analysis
+    
+        def categorize_satisfaction_score(self, score: float) -> str:
+            if score >= 8:
+                return "High Satisfaction"
+            elif score >= 6:
+                return "Moderate Satisfaction"
+            elif score >= 4:
+                return "Low Satisfaction"
+            else:
+                return "Poor Satisfaction"
+    
+    
