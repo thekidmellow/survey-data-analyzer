@@ -57,15 +57,10 @@ class DataVisualizer:
     def create_report_header(self) -> str:
 
         header = f
-        
+
         return header
     
     def get_current_date(self) -> str:
-        """
-        Get current date for report timestamp.
-        
-        Returns:
-            str: Current date string
-        """
+    
         from datetime import datetime
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")    
