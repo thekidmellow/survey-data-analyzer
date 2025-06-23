@@ -172,4 +172,29 @@ class SurveyAnalyzer:
             'shortest_response': min(lengths),
             'longest_response': max(lengths),
             'total_words': sum(word_counts)
-        }        
+        }   
+
+    def analyze_response_patterns(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        patterns = {
+            'completion_rate': self.calculate_completion_rate(data),
+            'response_consistency': self.analyze_response_consistency(data),
+            'common_combinations': self.find_common_response_combinations(data)
+        }
+        
+        return patterns    
+
+    def calculate_completion_rate(self, data: List[Dict[str, Any]]) -> Dict[str, float]:
+        if not data:
+            return {}
+        
+        total_responses = len(data)
+        completion_rates = {}
+        
+        # Iterate through each column to calculate completion (LO3 - repetition)
+        for column in data[0].keys():
+            completed_count = sum(1 for record in data 
+                                if record.get(column) is not None and record.get(column) != '')
+            completion_rate = round((completed_count / total_responses) * 100, 1)
+            completion_rates[column] = completion_rate
+        
+        return completion_rates 
