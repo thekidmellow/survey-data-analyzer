@@ -253,5 +253,57 @@ class SurveyAnalyzer:
                 return "Low Satisfaction"
             else:
                 return "Poor Satisfaction"
+            
+    def assess_data_quality(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:   
+        if not data:
+            return {'error': 'No data to assess'}
+        
+        total_records = len(data)
+        total_fields = len(data[0].keys()) if data else 0
+        
+        # Count missing values across all records
+        missing_count = 0
+        for record in data:
+            for value in record.values():
+                if value is None or value == '':
+                    missing_count += 1
+        
+        total_fields_count = total_records * total_fields
+        completeness_rate = round(((total_fields_count - missing_count) / total_fields_count) * 100, 1) if total_fields_count > 0 else 0
+        
+        quality_assessment = {
+            'completeness_rate': f"{completeness_rate}%",
+            'total_records': total_records,
+            'missing_values': missing_count,
+            'data_quality_score': self.calculate_quality_score(completeness_rate),
+            'recommendations': self.generate_quality_recommendations(completeness_rate)
+        }
+        
+        return quality_assessment     
+    
+    def calculate_quality_score(self, completeness_rate: float) -> str:
+        if completeness_rate >= 95:
+            return "Excellent"
+        elif completeness_rate >= 85:
+            return "Good"
+        elif completeness_rate >= 70:
+            return "Fair"
+        else:
+            return "Poor"
+    
+    def generate_quality_recommendations(self, completeness_rate: float) -> List[str]:
+        recommendations = []
+        
+        if completeness_rate < 95:
+            recommendations.append("Consider reviewing data collection methods to reduce missing values")
+        
+        if completeness_rate < 70:
+            recommendations.append("Implement data validation rules during collection")
+            recommendations.append("Consider making key questions required fields")
+        
+        recommendations.append("Regularly monitor data quality metrics")
+        
+        return recommendations
+</lov-write>
     
     
