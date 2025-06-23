@@ -205,3 +205,39 @@ class DataVisualizer:
             color = self.colors['warning']
         
         return f"[{color}{filled_part}{Style.RESET_ALL}{empty_part}] {score}/{max_score}"
+    
+    def visualize_data_quality(self, quality_data: Dict[str, Any]) -> str:
+        section = f"{self.colors['secondary']}🔍 DATA QUALITY ASSESSMENT{Style.RESET_ALL}\n"
+        section += "-" * 50 + "\n"
+        
+        # Quality metrics
+        completeness = quality_data.get('completeness_rate', 'N/A')
+        quality_score = quality_data.get('data_quality_score', 'Unknown')
+        
+        section += f"Completeness Rate: {self.colors['accent']}{completeness}{Style.RESET_ALL}\n"
+        section += f"Quality Score: {self.get_quality_color(quality_score)}{quality_score}{Style.RESET_ALL}\n"
+        section += f"Missing Values: {quality_data.get('missing_values', 'N/A')}\n\n"
+        
+        # Recommendations
+        recommendations = quality_data.get('recommendations', [])
+        if recommendations:
+            section += f"{self.colors['info']}Recommendations:{Style.RESET_ALL}\n"
+            for i, rec in enumerate(recommendations, 1):
+                section += f"  {i}. {rec}\n"
+        
+        return section
+    
+    def get_quality_color(self, quality: str) -> str:
+        quality_lower = quality.lower()
+        if quality_lower == 'excellent':
+            return self.colors['secondary']
+        elif quality_lower == 'good':
+            return self.colors['primary']
+        elif quality_lower == 'fair':
+            return self.colors['accent']
+        else:
+            return self.colors['warning']
+    
+    def create_report_footer(self) -> str:
+        footer = f
+        return footer
