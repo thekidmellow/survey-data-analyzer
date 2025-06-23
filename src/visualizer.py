@@ -241,3 +241,27 @@ class DataVisualizer:
     def create_report_footer(self) -> str:
         footer = f
         return footer
+    
+    def export_report(self, report_content: str, filename: str) -> bool:
+        try:
+            # Remove color codes for text file export
+            clean_content = self.remove_color_codes(report_content)
+            
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write(clean_content)
+            
+            print(f"{self.colors['secondary']}✓ Report exported to {filename}{Style.RESET_ALL}")
+            return True
+            
+        except Exception as e:
+            print(f"{self.colors['warning']}✗ Export failed: {str(e)}{Style.RESET_ALL}")
+            return False
+    
+    def remove_color_codes(self, text: str) -> str:
+        import re
+        # Remove ANSI escape sequences
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        return ansi_escape.sub('', text)
+</lov-write>
+
+<lov-write file_path="src/utils.py">
