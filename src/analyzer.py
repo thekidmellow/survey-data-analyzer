@@ -154,4 +154,22 @@ class SurveyAnalyzer:
             'most_common': frequency_counter.most_common(1)[0] if frequency_counter else None,
             'category_count': len(frequency_counter),
             'frequency_distribution': frequency_analysis
+        }
+
+    def analyze_text_column(self, values: List[Any]) -> Dict[str, Any]:
+        text_values = [str(v) for v in values if v]
+        
+        if not text_values:
+            return {'error': 'No text values found'}
+        
+        # Calculate text statistics
+        lengths = [len(text) for text in text_values]
+        word_counts = [len(text.split()) for text in text_values]
+        
+        return {
+            'average_length': round(statistics.mean(lengths), 1),
+            'average_word_count': round(statistics.mean(word_counts), 1),
+            'shortest_response': min(lengths),
+            'longest_response': max(lengths),
+            'total_words': sum(word_counts)
         }        
