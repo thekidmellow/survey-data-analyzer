@@ -146,3 +146,62 @@ class DataVisualizer:
             return self.colors['accent']     # Yellow for medium
         else:
             return self.colors['warning']    # Red for low values
+        
+    def visualize_satisfaction_analysis(self, satisfaction_data: Dict[str, Any]) -> str:    
+        section = f"{self.colors['secondary']}😊 SATISFACTION ANALYSIS{Style.RESET_ALL}\n"
+        section += "-" * 50 + "\n"
+        
+        if not satisfaction_data:
+            return section + "No satisfaction data available\n"
+        
+        # Display each satisfaction metric
+        for metric, analysis in satisfaction_data.items():
+            section += f"\n{self.colors['info']}{metric}:{Style.RESET_ALL}\n"
+            
+            if 'average_score' in analysis:
+                score = analysis['average_score']
+                level = analysis.get('satisfaction_level', 'Unknown')
+                section += f"  Average Score: {self.colors['accent']}{score}{Style.RESET_ALL}\n"
+                section += f"  Level: {self.get_satisfaction_color(level)}{level}{Style.RESET_ALL}\n"
+                
+                # Create satisfaction meter
+                section += f"  Satisfaction Meter: {self.create_satisfaction_meter(score)}\n"
+            
+            if 'response_distribution' in analysis:
+                dist = analysis['response_distribution']
+                section += "  Response Distribution:\n"
+                for response, count in dist.most_common():
+                    section += f"    {response}: {count}\n"
+        
+        return section
+    
+    def get_satisfaction_color(self, level: str) -> str:
+        level_lower = level.lower()
+        if 'high' in level_lower:
+            return self.colors['secondary']
+        elif 'moderate' in level_lower:
+            return self.colors['primary']
+        elif 'low' in level_lower:
+            return self.colors['accent']
+        else:
+            return self.colors['warning']
+    
+    def create_satisfaction_meter(self, score: float, max_score: float = 10) -> str:
+        meter_length = 20
+        filled_length = int((score / max_score) * meter_length)
+        
+        # Create the meter using repetition (LO3)
+        filled_part = "█" * filled_length
+        empty_part = "░" * (meter_length - filled_length)
+        
+        # Color code based on score
+        if score >= 8:
+            color = self.colors['secondary']
+        elif score >= 6:
+            color = self.colors['primary']
+        elif score >= 4:
+            color = self.colors['accent']
+        else:
+            color = self.colors['warning']
+        
+        return f"[{color}{filled_part}{Style.RESET_ALL}{empty_part}] {score}/{max_score}"
