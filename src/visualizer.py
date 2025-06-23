@@ -111,3 +111,38 @@ class DataVisualizer:
             section += "\n"
         
         return section    
+    
+    def create_horizontal_bar_chart(self, data: Dict[str, float], title: str) -> str:
+        if not data:
+            return "No data available for chart\n"
+        
+        chart = f"\n{title}:\n"
+        
+        # Find maximum value for scaling
+        max_value = max(data.values()) if data.values() else 1
+        
+        # Create bars for each data point using repetition (LO3)
+        for label, value in data.items():
+            # Calculate bar length proportional to chart width
+            bar_length = int((value / max_value) * self.chart_width) if max_value > 0 else 0
+            
+            # Create the bar using string repetition
+            bar = self.bar_char * bar_length
+            
+            # Format the line with color coding based on value
+            color = self.get_value_color(value, max_value)
+            chart += f"  {label:<20} |{color}{bar:<{self.chart_width}}{Style.RESET_ALL}| {value}\n"
+        
+        return chart
+    
+    def get_value_color(self, value: float, max_value: float) -> str:
+        ratio = value / max_value if max_value > 0 else 0
+        
+        if ratio >= 0.8:
+            return self.colors['secondary']  # Green for high values
+        elif ratio >= 0.6:
+            return self.colors['primary']    # Blue for medium-high
+        elif ratio >= 0.4:
+            return self.colors['accent']     # Yellow for medium
+        else:
+            return self.colors['warning']    # Red for low values
