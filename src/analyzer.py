@@ -135,3 +135,23 @@ class SurveyAnalyzer:
         except statistics.StatisticsError:
             # Return mean when no unique mode exists
             return round(statistics.mean(values), 2)
+
+    def analyze_categorical_column(self, values: List[Any]) -> Dict[str, Any]:
+        # Count frequency of each category
+        frequency_counter = Counter(str(v) for v in values)
+        total_count = len(values)
+        
+        # Calculate percentages and sort by frequency
+        frequency_analysis = {}
+        for category, count in frequency_counter.most_common():
+            percentage = round((count / total_count) * 100, 1)
+            frequency_analysis[category] = {
+                'count': count,
+                'percentage': f"{percentage}%"
+            }
+        
+        return {
+            'most_common': frequency_counter.most_common(1)[0] if frequency_counter else None,
+            'category_count': len(frequency_counter),
+            'frequency_distribution': frequency_analysis
+        }        
