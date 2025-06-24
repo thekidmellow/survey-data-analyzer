@@ -325,4 +325,7 @@ class SurveyAnalyzer:
         
         return recommendations
     
-    
+    def analyze_demographics(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        return {
+            'note': 'Demographic analysis not implemented yet.'
+        }
