@@ -66,3 +66,10 @@ setup(
     
     # Keywords for package discovery
     keywords="survey data analysis statistics research cli",
+
+    # Entry points for command-line interface
+    entry_points={
+        "console_scripts": [
+            "survey-analyzer=main:main",
+        ],
+    },
