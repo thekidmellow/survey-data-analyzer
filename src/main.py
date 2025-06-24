@@ -133,6 +133,28 @@ class SurveyDataApp:
             
         input("\nPress Enter to continue...")
 
+    def import_manual_data(self):
+        
+        print("\nEnter your survey data (type 'done' to finish):")
+
+        headers = input("Enter comma-separated column names: ").strip().split(",")
+        dataset = []
+
+        while True:
+            row_input = input(f"Enter data for {headers} (comma-separated): ").strip()
+            if row_input.lower() == "done":
+                break
+            values = row_input.split(",")
+            if len(values) != len(headers):
+                print("Mismatch between number of columns and values. Try again.")
+                continue
+            record = dict(zip(headers, values))
+            dataset.append(record)
+
+        self.current_dataset = dataset
+        print(f"{Fore.GREEN}✓ Successfully recorded {len(dataset)} manual entries{Style.RESET_ALL}")
+        input("\nPress Enter to continue...")
+
     def analyze_data(self):
         """
         Perform statistical analysis...
