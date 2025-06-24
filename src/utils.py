@@ -72,30 +72,31 @@ def get_user_input(prompt: str, required: bool = True, input_type: type = str) -
             print(f"{Fore.RED}Unexpected error: {str(e)}{Style.RESET_ALL}")
 
 def validate_file_path(file_path: str) -> bool:
-        if not file_path:
+    if not file_path:
         return False
-    
+
     try:
         # Check if file exists
         if not os.path.exists(file_path):
             print(f"{Fore.RED}File does not exist: {file_path}{Style.RESET_ALL}")
             return False
-        
+
         # Check if it's actually a file (not a directory)
         if not os.path.isfile(file_path):
             print(f"{Fore.RED}Path is not a file: {file_path}{Style.RESET_ALL}")
             return False
-        
+
         # Check if file is readable
         if not os.access(file_path, os.R_OK):
             print(f"{Fore.RED}File is not readable: {file_path}{Style.RESET_ALL}")
             return False
-        
+
         return True
-        
+
     except Exception as e:
         print(f"{Fore.RED}Error validating file path: {str(e)}{Style.RESET_ALL}")
-        return False        
+        return False
+
 
 def format_number(number: float, decimal_places: int = 2) -> str:
     try:

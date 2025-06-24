@@ -304,6 +304,5 @@ class SurveyAnalyzer:
         recommendations.append("Regularly monitor data quality metrics")
         
         return recommendations
-</lov-write>
     
     

@@ -55,9 +55,7 @@ class DataVisualizer:
         return "\n\n".join(report_sections)
 
     def create_report_header(self) -> str:
-
-        header = f
-
+        header = f"{self.colors['primary']}=== SURVEY DATA ANALYSIS REPORT ==={Style.RESET_ALL}\nGenerated: {self.get_current_date()}\n"
         return header
     
     def get_current_date(self) -> str:
@@ -239,7 +237,7 @@ class DataVisualizer:
             return self.colors['warning']
     
     def create_report_footer(self) -> str:
-        footer = f
+        footer = f"\n{self.colors['primary']}=== END OF REPORT ==={Style.RESET_ALL}\n"
         return footer
     
     def export_report(self, report_content: str, filename: str) -> bool:
@@ -262,6 +260,3 @@ class DataVisualizer:
         # Remove ANSI escape sequences
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         return ansi_escape.sub('', text)
-</lov-write>
-
-<lov-write file_path="src/utils.py">
