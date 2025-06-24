@@ -15,3 +15,16 @@ def read_requirements():
             requirements = [line.strip() for line in fh 
                         if line.strip() and not line.startswith("#")]
     return requirements
+
+# Package configuration
+setup(
+    # Basic package information
+    name="survey-data-analyzer",
+    version="1.0.0",
+    author="[Your Name]",
+    author_email="your.email@example.com",
+    
+    # Package description
+    description="A comprehensive Python command-line application for analyzing survey data",
+    long_description=read_readme(),
+    long_description_content_type="text/markdown",    
