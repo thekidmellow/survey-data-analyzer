@@ -73,3 +73,28 @@ setup(
             "survey-analyzer=main:main",
         ],
     },
+
+    # Additional package data
+    include_package_data=True,
+    package_data={
+        "": ["*.txt", "*.md", "*.rst"],
+    },
+    
+    # Development dependencies (optional)
+    extras_require={
+        "dev": [
+            "pytest>=7.0.0",
+            "pytest-cov>=4.0.0",
+            "black>=22.0.0",
+            "flake8>=5.0.0",
+            "isort>=5.10.0",
+        ],
+        "docs": [
+            "sphinx>=5.0.0",
+            "sphinx-rtd-theme>=1.0.0",
+        ],
+    },
+    
+    # Zip safety
+    zip_safe=False,
+)
