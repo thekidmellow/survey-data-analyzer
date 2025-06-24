@@ -329,3 +329,8 @@ class SurveyAnalyzer:
         return {
             'note': 'Demographic analysis not implemented yet.'
         }
+
+    def analyze_text_responses(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        return {
+            'note': 'Text response analysis not implemented yet.'
+        }
