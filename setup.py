@@ -36,3 +36,13 @@ setup(
         "Documentation": "https://github.com/[your-username]/survey-data-analyzer#readme",
         "Source Code": "https://github.com/[your-username]/survey-data-analyzer",
     },
+
+    # Package discovery and structure
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
+    
+    # Dependencies
+    install_requires=read_requirements(),
+    
+    # Python version requirement
+    python_requires=">=3.8",
