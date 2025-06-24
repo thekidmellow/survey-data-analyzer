@@ -31,7 +31,7 @@ class SurveyDataApp:
             while True:
                 self.show_main_menu()
                 choice = get_user_choice("Enter your choice (1-6): ", 1, 6)
-                
+
                 if choice == 1:
                     self.import_data()
                 elif choice == 2:
@@ -45,12 +45,12 @@ class SurveyDataApp:
                 elif choice == 6:
                     self.exit_application()
                     break
-        
+
         except KeyboardInterrupt:
-            print(f"\n{Fore.YELLOW}Application interrupted by user.{Style.RESET_ALL}")
+            print(f"\n{Fore.YELLOW}Interrupted by user.{Style.RESET_ALL}")
             self.exit_application()
         except Exception as e:
-            print(f"{Fore.RED}An unexpected error occurred: {str(e)}{Style.RESET_ALL}")
+            print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
             self.exit_application()
 
     def show_welcome(self):
@@ -59,7 +59,11 @@ class SurveyDataApp:
         """
         clear_screen()
         print_header("SURVEY DATA ANALYZER", "=")
-        print(f"{Fore.CYAN}Welcome to the Survey Data Analyzer!{Style.RESET_ALL}")
+        print(
+            f"{Fore.CYAN}"
+            "Welcome to the Survey Data Analyzer!"
+            f"{Style.RESET_ALL}"
+            )
         print()
         print("This application helps you:")
         print("• Import survey data from CSV files")
@@ -67,7 +71,11 @@ class SurveyDataApp:
         print("• Generate visualizations and insights")
         print("• Export professional reports")
         print()
-        print(f"{Fore.GREEN}Ready to analyze your survey data!{Style.RESET_ALL}")
+        print(
+            f"{Fore.GREEN}"
+            "Ready to analyze your survey data!"
+            f"{Style.RESET_ALL}"
+            )
         input("\nPress Enter to continue...")
 
     def show_main_menu(self):
@@ -90,13 +98,13 @@ class SurveyDataApp:
         """
         clear_screen()
         print_header("IMPORT SURVEY DATA", "-")
-        
+
         try:
             print("Choose import method:")
             print("1. Import from CSV file")
             print("2. Enter data manually")
             print("3. Load sample dataset")
-            
+
             choice = get_user_choice("Select option (1-3): ", 1, 3)
 
             if choice == 1:
@@ -107,8 +115,11 @@ class SurveyDataApp:
                 self.load_sample_data()
 
         except Exception as e:
-            print(f"{Fore.RED}Error during data import: {str(e)}{Style.RESET_ALL}")
-            input("Press Enter to continue...")  
+            print(
+                f"{Fore.RED}Error during data import: "
+                f"{str(e)}{Style.RESET_ALL}"
+            )
+            input("Press Enter to continue...")
 
     def import_from_csv(self):
         """
@@ -119,40 +130,53 @@ class SurveyDataApp:
         if not file_path:
             print(f"{Fore.YELLOW}No file path provided.{Style.RESET_ALL}")
             return
-            
+
         try:
             # Attempt to load data using the data manager
             self.current_dataset = self.data_manager.load_csv(file_path)
-            print(f"{Fore.GREEN}✓ Successfully imported data from {file_path}{Style.RESET_ALL}")
+            print(
+                f"{Fore.GREEN}✓ Successfully imported data from "
+                f"{file_path}{Style.RESET_ALL}"
+                )
             print(f"Dataset contains {len(self.current_dataset)} records")
-            
+
         except FileNotFoundError:
             print(f"{Fore.RED}✗ File not found: {file_path}{Style.RESET_ALL}")
         except Exception as e:
             print(f"{Fore.RED}✗ Error loading file: {str(e)}{Style.RESET_ALL}")
-            
+
         input("\nPress Enter to continue...")
 
     def import_manual_data(self):
-        
+
         print("\nEnter your survey data (type 'done' to finish):")
 
-        headers = input("Enter comma-separated column names: ").strip().split(",")
+        headers = [
+            h.strip()
+            for h in input("Enter comma-separated column names: ").split(",")
+        ]
         dataset = []
 
         while True:
-            row_input = input(f"Enter data for {headers} (comma-separated): ").strip()
+            row_input = input(
+                f"Enter data for {headers} (comma-separated): "
+                ).strip()
             if row_input.lower() == "done":
                 break
             values = row_input.split(",")
             if len(values) != len(headers):
-                print("Mismatch between number of columns and values. Try again.")
+                print(
+                    "Mismatch between number of columns and values. Try again."
+                    )
                 continue
             record = dict(zip(headers, values))
             dataset.append(record)
 
         self.current_dataset = dataset
-        print(f"{Fore.GREEN}✓ Successfully recorded {len(dataset)} manual entries{Style.RESET_ALL}")
+        print(
+            f"{Fore.GREEN}✓ Successfully recorded "
+            f"{len(dataset)} manual entries{Style.RESET_ALL}"
+            )
         input("\nPress Enter to continue...")
 
     def analyze_data(self):
@@ -160,29 +184,36 @@ class SurveyDataApp:
         Perform statistical analysis...
         """
         if not self.current_dataset:
-            print(f"{Fore.YELLOW}No data loaded. Please import data first.{Style.RESET_ALL}")
+            print(
+                f"{Fore.YELLOW}"
+                "No data loaded. Please import data first."
+                f"{Style.RESET_ALL}"
+            )
             input("Press Enter to continue...")
             return
-            
+
         clear_screen()
         print_header("DATA ANALYSIS", "-")
-        
+
         try:
             results = self.analyzer.analyze_dataset(self.current_dataset)
             self.display_analysis_results(results)
 
         except Exception as e:
-            print(f"{Fore.RED}Error during analysis: {str(e)}{Style.RESET_ALL}")
-            
+            print(
+                f"{Fore.RED}Error during analysis: "
+                f"{str(e)}{Style.RESET_ALL}"
+            )
+
         input("\nPress Enter to continue...")
-    
+
     def display_analysis_results(self, results):
         """
         Display analysis results...
         """
         print(f"{Fore.GREEN}ANALYSIS RESULTS:{Style.RESET_ALL}")
         print("=" * 50)
-        
+
         for section, data in results.items():
             print(f"\n{Fore.CYAN}{section.upper()}:{Style.RESET_ALL}")
             if isinstance(data, dict):
@@ -196,7 +227,11 @@ class SurveyDataApp:
         Clean exit from the application...
         """
         clear_screen()
-        print(f"{Fore.GREEN}Thank you for using Survey Data Analyzer!{Style.RESET_ALL}")
+        print(
+            f"{Fore.GREEN}"
+            "Thank you for using Survey Data Analyzer!"
+            f"{Style.RESET_ALL}"
+        )
         print("Remember to commit your work to GitHub!")
         print("\nGoodbye! 👋")
 
@@ -204,7 +239,7 @@ class SurveyDataApp:
 def main():
     """
     Application entry point that initializes and runs the main application.
-    
+
     This function serves as the primary entry point, demonstrating
     proper program structure and initialization (LO1).
     """
