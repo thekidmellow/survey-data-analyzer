@@ -95,4 +95,27 @@ def validate_file_path(file_path: str) -> bool:
         
     except Exception as e:
         print(f"{Fore.RED}Error validating file path: {str(e)}{Style.RESET_ALL}")
-        return False            
+        return False        
+
+def format_number(number: float, decimal_places: int = 2) -> str:
+    try:
+        return f"{number:.{decimal_places}f}"
+    except (ValueError, TypeError):
+        return "N/A"
+
+def create_progress_bar(current: int, total: int, width: int = 30) -> str:
+    if total <= 0:
+        return "[No Progress Available]"
+    
+    # Calculate progress percentage
+    progress = min(current / total, 1.0)  # Cap at 100%
+    filled_width = int(progress * width)
+    
+    # Create the bar using repetition (LO3)
+    filled_part = "█" * filled_width
+    empty_part = "░" * (width - filled_width)
+    
+    # Calculate percentage for display
+    percentage = int(progress * 100)
+    
+    return f"[{filled_part}{empty_part}] {percentage}% ({current}/{total})"    
