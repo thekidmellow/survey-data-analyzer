@@ -28,3 +28,11 @@ setup(
     description="A comprehensive Python command-line application for analyzing survey data",
     long_description=read_readme(),
     long_description_content_type="text/markdown",    
+
+    # Project URLs
+    url="https://github.com/[your-username]/survey-data-analyzer",
+    project_urls={
+        "Bug Tracker": "https://github.com/[your-username]/survey-data-analyzer/issues",
+        "Documentation": "https://github.com/[your-username]/survey-data-analyzer#readme",
+        "Source Code": "https://github.com/[your-username]/survey-data-analyzer",
+    },
