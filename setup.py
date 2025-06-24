@@ -45,4 +45,24 @@ setup(
     install_requires=read_requirements(),
     
     # Python version requirement
-    python_requires=">=3.8",
+    python_requires=">=3.8, <3.13",
+
+    # Package classification
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Operating System :: OS Independent",
+        "Environment :: Console",
+    ],
+    
+    # Keywords for package discovery
+    keywords="survey data analysis statistics research cli",
