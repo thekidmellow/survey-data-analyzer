@@ -182,6 +182,20 @@ class SurveyAnalyzer:
         }
         
         return patterns    
+    
+    def analyze_response_consistency(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    
+        issues = []
+        for i, record in enumerate(data):
+            for key, value in record.items():
+                if value is None or str(value).strip() == "":
+                    issues.append(f"Missing value in row {i+1}, column '{key}'")
+    
+        return {
+            'issues_found': len(issues),
+            'examples': issues[:5]  # Show only the first 5 issues for brevity
+        }
+
 
     def calculate_completion_rate(self, data: List[Dict[str, Any]]) -> Dict[str, float]:
         if not data:
@@ -244,7 +258,7 @@ class SurveyAnalyzer:
         
         return analysis
     
-        def categorize_satisfaction_score(self, score: float) -> str:
+    def categorize_satisfaction_score(self, score: float) -> str:
             if score >= 8:
                 return "High Satisfaction"
             elif score >= 6:
