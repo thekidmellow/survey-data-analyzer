@@ -1,0 +1,12 @@
+csv
+respondent_id,age,gender,satisfaction,rating,would_recommend,comments
+1,25,Female,Very Satisfied,9,Yes,Great service and friendly staff!
+2,34,Male,Satisfied,7,Yes,Good overall experience
+3,42,Female,Neutral,5,Maybe,Average service could be better
+4,28,Male,Dissatisfied,3,No,Long wait times and poor service
+5,31,Female,Very Satisfied,10,Yes,Excellent service highly recommend!
+6,45,Male,Satisfied,8,Yes,Very good experience overall
+7,29,Female,Satisfied,7,Yes,Good service friendly staff
+8,38,Male,Neutral,6,Maybe,Okay experience nothing special
+9,33,Female,Very Satisfied,9,Yes,Outstanding service will return
+10,27,Male,Dissatisfied,4,No,Below expectations needs improvement
