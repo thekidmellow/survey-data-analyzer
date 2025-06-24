@@ -181,7 +181,13 @@ class SurveyAnalyzer:
             'common_combinations': self.find_common_response_combinations(data)
         }
         
-        return patterns    
+        return patterns   
+
+    def find_common_response_combinations(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        return {
+            'note': 'Common response combination analysis not implemented yet.'
+        }
+
     
     def analyze_response_consistency(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
     
