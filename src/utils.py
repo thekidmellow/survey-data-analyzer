@@ -125,7 +125,7 @@ def create_progress_bar(current: int, total: int, width: int = 30) -> str:
     # Calculate percentage for display
     percentage = int(progress * 100)
 
-    return f"[{filled_part}{empty_part}] {percentage}% ({current}/{total})"  
+    return f"[{filled_part}{empty_part}] {percentage}% ({current}/{total})"
 
 
 def log_operation(operation: str, success: bool, details: str = "") -> None:
@@ -210,6 +210,8 @@ def get_file_size(file_path: str) -> str:
         return "Unknown size"
 
 # Configuration and constants for the application
+
+
 APP_CONFIG = {
     'name': 'Survey Data Analyzer',
     'version': '1.0.0',
@@ -219,6 +221,7 @@ APP_CONFIG = {
     'default_output_dir': 'reports',
     'log_file': 'survey_analyzer.log'
 }
+
 
 def get_app_info() -> dict:
     return APP_CONFIG.copy()

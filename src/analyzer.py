@@ -188,56 +188,86 @@ class SurveyAnalyzer:
             'note': 'Common response combination analysis not implemented yet.'
         }
 
-
-    def analyze_response_consistency(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def analyze_response_consistency(
+            self,
+            data: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
 
         issues = []
         for i, record in enumerate(data):
             for key, value in record.items():
                 if value is None or str(value).strip() == "":
-                    issues.append(f"Missing value in row {i+1}, column '{key}'")
+                    issues.append(
+                        f"Missing value in row {i+1}, column '{key}'"
+                    )
 
         return {
             'issues_found': len(issues),
             'examples': issues[:5]  # Show only the first 5 issues for brevity
         }
 
-
-    def calculate_completion_rate(self, data: List[Dict[str, Any]]) -> Dict[str, float]:
+    def calculate_completion_rate(
+            self,
+            data: List[Dict[str, Any]],
+    ) -> Dict[str, float]:
         if not data:
             return {}
 
         total_responses = len(data)
         completion_rates = {}
 
-        # Iterate through each column to calculate completion (LO3 - repetition)
         for column in data[0].keys():
-            completed_count = sum(1 for record in data
-                                if record.get(column) is not None and record.get(column) != '')
-            completion_rate = round((completed_count / total_responses) * 100, 1)
+            completed_count = sum(
+                1 for record in data
+                if record.get(column) is not None
+                and record.get(column) != ''
+            )
+            completion_rate = round(
+                (completed_count / total_responses) * 100,
+                1
+            )
             completion_rates[column] = completion_rate
 
         return completion_rates
 
-    def analyze_satisfaction_metrics(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
-        satisfaction_keywords = ['satisfaction', 'rating', 'score', 'recommend']
+    def analyze_satisfaction_metrics(
+            self,
+            data: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        satisfaction_keywords = [
+            'satisfaction', 'rating', 'score', 'recommend'
+        ]
         satisfaction_results = {}
 
         # Find satisfaction-related columns using pattern matching
         satisfaction_columns = []
         for column in data[0].keys() if data else []:
-            if any(keyword in str(column).lower() for keyword in satisfaction_keywords):
+            if any(keyword in str(column).lower()
+                    for keyword in satisfaction_keywords):
                 satisfaction_columns.append(column)
+
+        if not satisfaction_columns:
+            return {'note': 'No satisfaction-related columns found'}
 
         # Analyze each satisfaction metric
         for column in satisfaction_columns:
-            values = [record.get(column) for record in data if record.get(column) is not None]
+            values = [
+                record.get(column)
+                for record in data
+                if record.get(column) is not None
+            ]
             if values:
-                satisfaction_results[column] = self.analyze_satisfaction_column(column, values)
+                satisfaction_results[column] = self.analyze_satisfaction_column(
+                    column, values
+                )
 
         return satisfaction_results
 
-    def analyze_satisfaction_column(self, column_name: str, values: List[Any]) -> Dict[str, Any]:
+    def analyze_satisfaction_column(
+            self,
+            column_name: str,
+            values: List[Any]
+    ) -> Dict[str, Any]:
         analysis = {'column': column_name}
 
         # Try numeric analysis first
@@ -252,29 +282,39 @@ class SurveyAnalyzer:
             # Numeric satisfaction analysis
             analysis.update({
                 'average_score': round(statistics.mean(numeric_values), 2),
-                'satisfaction_level': self.categorize_satisfaction_score(statistics.mean(numeric_values)),
-                'distribution': self.create_satisfaction_distribution(numeric_values)
+                'satisfaction_level': self.categorize_satisfaction_score(
+                    statistics.mean(numeric_values)
+                ),
+                'distribution': self.create_satisfaction_distribution(
+                    numeric_values
+                )
             })
         else:
             # Categorical satisfaction analysis
             analysis.update({
                 'response_distribution': Counter(str(v) for v in values),
-                'most_common_response': Counter(str(v) for v in values).most_common(1)[0] if values else None
+                'most_common_response': (
+                    Counter(str(v) for v in values).most_common(1)[0]
+                    if values
+                    else None
+                )
             })
 
         return analysis
 
     def categorize_satisfaction_score(self, score: float) -> str:
-            if score >= 8:
-                return "High Satisfaction"
-            elif score >= 6:
-                return "Moderate Satisfaction"
-            elif score >= 4:
-                return "Low Satisfaction"
-            else:
-                return "Poor Satisfaction"
+        if score >= 8:
+            return "High Satisfaction"
+        elif score >= 6:
+            return "Moderate Satisfaction"
+        elif score >= 4:
+            return "Low Satisfaction"
+        else:
+            return "Poor Satisfaction"
 
-    def assess_data_quality(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def assess_data_quality(
+            self, data: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         if not data:
             return {'error': 'No data to assess'}
 
@@ -289,14 +329,25 @@ class SurveyAnalyzer:
                     missing_count += 1
 
         total_fields_count = total_records * total_fields
-        completeness_rate = round(((total_fields_count - missing_count) / total_fields_count) * 100, 1) if total_fields_count > 0 else 0
+        if total_fields_count > 0:
+            filled_fields = total_fields_count - missing_count
+            completeness_rate = round(
+                (filled_fields / total_fields_count) * 100,
+                1
+            )
+        else:
+            completeness_rate = 0
 
         quality_assessment = {
             'completeness_rate': f"{completeness_rate}%",
             'total_records': total_records,
             'missing_values': missing_count,
-            'data_quality_score': self.calculate_quality_score(completeness_rate),
-            'recommendations': self.generate_quality_recommendations(completeness_rate)
+            'data_quality_score': self.calculate_quality_score(
+                completeness_rate
+            ),
+            'recommendations': self.generate_quality_recommendations(
+                completeness_rate
+            )
         }
 
         return quality_assessment
@@ -311,26 +362,40 @@ class SurveyAnalyzer:
         else:
             return "Poor"
 
-    def generate_quality_recommendations(self, completeness_rate: float) -> List[str]:
+    def generate_quality_recommendations(
+        self, completeness_rate: float
+    ) -> List[str]:
         recommendations = []
 
         if completeness_rate < 95:
-            recommendations.append("Consider reviewing data collection methods to reduce missing values")
+            recommendations.append(
+                "Consider reviewing data collection methods to reduce missing "
+                "values"
+            )
 
         if completeness_rate < 70:
-            recommendations.append("Implement data validation rules during collection")
-            recommendations.append("Consider making key questions required fields")
-
-        recommendations.append("Regularly monitor data quality metrics")
+            recommendations.append(
+                "Implement data validation rules during collection"
+            )
+            recommendations.append(
+                "Consider making key questions required fields"
+            )
+            recommendations.append("Regularly monitor data quality metrics")
 
         return recommendations
 
-    def analyze_demographics(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def analyze_demographics(
+        self, data: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+
         return {
             'note': 'Demographic analysis not implemented yet.'
         }
 
-    def analyze_text_responses(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def analyze_text_responses(
+        self, data: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+
         return {
             'note': 'Text response analysis not implemented yet.'
         }
