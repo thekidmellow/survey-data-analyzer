@@ -1,8 +1,10 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+
+# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -22,24 +24,33 @@ share/python-wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
+# Virtual Environments
 survey_env/
 venv/
 ENV/
 env/
 
-# IDE
+# VS Code, PyCharm, etc.
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
 *.swp
 *.swo
 
-# OS
+# macOS / Windows
 .DS_Store
 Thumbs.db
 
-# Logs
+# Logs and Reports
 *.log
-
-# Reports
 reports/*.txt
+survey_report.json
+
+# Jupyter / Notebook check (if applicable)
+.ipynb_checkpoints/
+
+# Local secrets (if ever used)
+.env

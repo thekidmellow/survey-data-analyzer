@@ -1,1 +1,1 @@
-worker: python main.py --auto
+worker: python src/main.py --auto

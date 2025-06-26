@@ -1,7 +1,7 @@
 {
     "name": "Survey Data Analyzer",
     "description": "A Python command-line application for analyzing survey data with statistical insights and visualizations",
-    "repository": "https://github.com/yourusername/survey-insights-cli",
+    "repository": "https://github.com/thekidmellow/survey-data-analyzer",
     "logo": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
     "keywords": [
     "python",
