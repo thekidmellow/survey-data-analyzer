@@ -84,7 +84,7 @@ sphinxcontrib-jquery==4.1
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==2.0.0
 sphinxcontrib-serializinghtml==2.0.0
--e git+https://github.com/thekidmellow/survey-data-analyzer.git@a4784729575c3cc2b504b968ef4cf97f6a328d0a#egg=survey_data_analyzer
+-e git+https://github.com/thekidmellow/survey-data-analyzer.git@main#egg=survey_data_analyzer
 textblob==0.19.0
 threadpoolctl==3.6.0
 tqdm==4.67.1
