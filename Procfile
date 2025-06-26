@@ -1,1 +1,1 @@
-worker: python src/main.py --auto
+web: python3 web_app.py
