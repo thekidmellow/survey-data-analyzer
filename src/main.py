@@ -21,6 +21,7 @@ class SurveyDataApp:
         self.analyzer = SurveyAnalyzer()
         self.visualizer = DataVisualizer()
         self.current_dataset = None
+        self.analysis_results = None
 
     def run(self):
         """
@@ -130,6 +131,10 @@ class SurveyDataApp:
         if not file_path:
             print(f"{Fore.YELLOW}No file path provided.{Style.RESET_ALL}")
             return
+        
+        if not file_path.lower().endswith(".csv"):
+            print(f"{Fore.YELLOW}Warning: File does not end with '.csv'. Proceeding anyway...{Style.RESET_ALL}")
+
 
         try:
             # Attempt to load data using the data manager
@@ -183,11 +188,9 @@ class SurveyDataApp:
         """
         Perform statistical analysis...
         """
-        if not self.current_dataset:
+        if not self.current_dataset or not isinstance(self.current_dataset, list) or len(self.current_dataset) == 0:
             print(
-                f"{Fore.YELLOW}"
-                "No data loaded. Please import data first."
-                f"{Style.RESET_ALL}"
+                f"{Fore.YELLOW}No data loaded or dataset is empty. Please import data first.{Style.RESET_ALL}"
             )
             input("Press Enter to continue...")
             return
@@ -197,6 +200,7 @@ class SurveyDataApp:
 
         try:
             results = self.analyzer.analyze_dataset(self.current_dataset)
+            self.analysis_results = results
             self.display_analysis_results(results)
 
         except Exception as e:
@@ -207,10 +211,31 @@ class SurveyDataApp:
 
         input("\nPress Enter to continue...")
 
+    def visualize_data(self):
+        """
+        Generate visualizations from analysis results.
+        """
+        if not hasattr(self, "analysis_results") or not self.analysis_results:
+            print(f"{Fore.YELLOW}Run analysis first to generate visualizations.{Style.RESET_ALL}")
+            input("Press Enter to continue...")
+            return
+
+        try:
+            self.visualizer.generate_visuals(self.analysis_results)
+            print(f"{Fore.GREEN}Visualizations generated successfully.{Style.RESET_ALL}")
+        except NotImplementedError:
+            print(f"{Fore.RED}Visualization feature not yet implemented.{Style.RESET_ALL}")
+        except Exception as e:
+            print(f"{Fore.RED}Error during visualization: {e}{Style.RESET_ALL}")
+
+        input("Press Enter to continue...")
+
     def display_analysis_results(self, results):
         """
         Display analysis results...
         """
+        import json
+        
         print(f"{Fore.GREEN}ANALYSIS RESULTS:{Style.RESET_ALL}")
         print("=" * 50)
 
@@ -221,6 +246,28 @@ class SurveyDataApp:
                     print(f"  {key}: {value}")
             else:
                 print(f"  {data}")
+
+    def export_results(self):
+        """
+        Export analysis results to a file.
+        """
+        if not self.analysis_results:
+            print(f"{Fore.YELLOW}No analysis results to export. Run analysis first.{Style.RESET_ALL}")
+            input("Press Enter to continue...")
+            return
+
+        try:
+            export_path = input("Enter the path to export results (e.g., results.json): ").strip()
+            if not export_path:
+                print(f"{Fore.YELLOW}No export path provided.{Style.RESET_ALL}")
+                return
+
+            self.data_manager.export_results(self.analysis_results, export_path)
+            print(f"{Fore.GREEN}✓ Results exported successfully to {export_path}{Style.RESET_ALL}")
+        except Exception as e:
+            print(f"{Fore.RED}✗ Error exporting results: {str(e)}{Style.RESET_ALL}")
+
+        input("Press Enter to continue...")
 
     def exit_application(self):
         """

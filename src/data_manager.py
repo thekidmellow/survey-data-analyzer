@@ -117,6 +117,11 @@ class DataManager:
 
     def export_to_csv(self, data: List[Dict[str, Any]], filename: str) -> bool:
         try:
+            # Check if data is empty
+            if not data:
+                print(f"{Fore.RED}✗ No data to export{Style.RESET_ALL}")
+                return False
+
             # Convert to DataFrame for easy CSV export
             df = pd.DataFrame(data)
 
@@ -132,6 +137,28 @@ class DataManager:
 
         except Exception as e:
             print(f"{Fore.RED}✗ Export failed: {str(e)}{Style.RESET_ALL}")
+            return False
+
+    def export_results(self, results: dict, filename: str) -> bool:
+        """
+        Export analysis results to a JSON file.
+        """
+        if not results:
+            print(f"{Fore.RED}✗ No results to export{Style.RESET_ALL}")
+            return False
+
+        try:
+            output_path = Path(filename)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(results, f, indent=4)
+
+            print(f"{Fore.GREEN}✓ Results exported to {filename}{Style.RESET_ALL}")
+            return True
+
+        except Exception as e:
+            print(f"{Fore.RED}✗ Failed to export results: {str(e)}{Style.RESET_ALL}")
             return False
 
     def create_sample_dataset(self) -> List[Dict[str, Any]]:
