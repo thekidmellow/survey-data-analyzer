@@ -18,7 +18,7 @@ class DataVisualizer:
     """
 
     def __init__(self):
-        self.output_dir = "visualizations"
+        self.output_dir = os.path.join(os.getenv('TMPDIR', '/tmp'), 'visualizations')  # Changed for Heroku
         self._create_output_directory()
 
         # Set up matplotlib style
@@ -124,7 +124,6 @@ class DataVisualizer:
             plt.title(f'Distribution of {var_name}', fontsize=14, fontweight='bold')
             plt.savefig(f'{self.output_dir}/categorical_{var_name.lower().replace(" ", "_")}.png',     dpi=300)
             plt.close()
-
 
     def format_column_analysis(
             self, column_name: str, analysis: Dict[str, Any]) -> str:
@@ -341,30 +340,66 @@ class DataVisualizer:
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         return ansi_escape.sub('', text)
     
+    def _create_descriptive_charts(self, descriptive_stats: Dict[str, Any]):
+        """Generate charts for descriptive statistics."""
+        try:
+            os.makedirs(self.output_dir, exist_ok=True)
+        
+            if 'numeric_variables' in descriptive_stats:
+                for var_name, stats in descriptive_stats['numeric_variables'].items():
+                    # Create figure
+                    plt.figure(figsize=(10, 6))
+                    metrics = ['Mean', 'Median', 'Min', 'Max']
+                    values = [stats.get('mean', 0), stats.get('median', 0), 
+                            stats.get('min', 0), stats.get('max', 0)]
+                
+                    # Plot and save
+                    plt.bar(metrics, values, color=sns.color_palette("husl", len(metrics)))
+                    plt.title(f'Statistics for {var_name}', fontsize=14)
+                    plt.savefig(f'{self.output_dir}/desc_{var_name}.png', dpi=300)
+                    plt.close()
+                
+        except Exception as e:
+            print(f"Error in descriptive charts: {str(e)}")
+            raise
+
+    def _create_correlation_heatmap(self, corr_matrix):
+        """Create correlation heatmap."""
+        try:
+            plt.figure(figsize=(12, 10))
+            sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0)
+            plt.title('Variable Correlations')
+            plt.savefig(f'{self.output_dir}/correlation_heatmap.png', dpi=300)
+            plt.close()
+        except Exception as e:
+            print(f"Error in heatmap: {str(e)}")
+            raise
+    
     def generate_visuals(self, analysis_results: Dict[str, Any]):
-        """Generate all visualizations from analysis results."""
+        """Generate all visualizations."""
         print("Generating visualizations...")
     
         try:
-            # Generate descriptive statistics charts
+            # Ensure directory exists
+            os.makedirs(self.output_dir, exist_ok=True)
+        
+            # Generate charts
             if "descriptive_statistics" in analysis_results:
                 self._create_descriptive_charts(analysis_results["descriptive_statistics"])
         
-            # Generate categorical analysis charts
             if "categorical_analysis" in analysis_results:
                 self._create_categorical_charts(analysis_results["categorical_analysis"])
         
-            # Generate correlation heatmap
-            if "correlation_analysis" in analysis_results and "matrix" in analysis_results["correlation_analysis"]:
+            if ("correlation_analysis" in analysis_results and 
+                "matrix" in analysis_results["correlation_analysis"]):
                 self._create_correlation_heatmap(analysis_results["correlation_analysis"]["matrix"])
         
-            # Generate summary dashboard
-            self._create_summary_dashboard(analysis_results)
-        
-            print(f"Visualizations saved to '{self.output_dir}' directory")
+            print(f"✓ Visualizations saved to {self.output_dir}")
+            return True
         
         except Exception as e:
-            raise Exception(f"Error generating visualizations: {str(e)}")
+            print(f"✗ Error: {str(e)}")
+            return False
 
 
 # Example usage
