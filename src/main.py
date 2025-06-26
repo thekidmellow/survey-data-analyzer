@@ -1,6 +1,5 @@
 import sys
 import os
-from pathlib import Path
 from colorama import init, Fore, Style
 from data_manager import DataManager
 from analyzer import SurveyAnalyzer
@@ -285,16 +284,34 @@ class SurveyDataApp:
 
 def main():
     """
-    Application entry point that initializes and runs the main application.
-
-    This function serves as the primary entry point, demonstrating
-    proper program structure and initialization (LO1).
+    Entry point for the application. Supports both interactive and auto mode.
     """
-    # Create and run the application instance
     app = SurveyDataApp()
-    app.run()
+
+    if "--auto" in sys.argv:
+        print(f"{Fore.YELLOW}[AUTO MODE]{Style.RESET_ALL} Running analysis automatically...")
+
+        csv_path = os.getenv("AUTO_CSV_PATH", "survey.csv")
+        export_path = os.getenv("EXPORT_PATH", "survey_report.json")
+
+        try:
+            app.current_dataset = app.data_manager.load_csv(csv_path)
+            print(f"{Fore.GREEN}✓ Loaded dataset from {csv_path}{Style.RESET_ALL}")
+
+            app.analysis_results = app.analyzer.analyze_dataset(app.current_dataset)
+            print(f"{Fore.GREEN}✓ Analysis completed{Style.RESET_ALL}")
+
+            app.data_manager.export_results(app.analysis_results, export_path)
+            print(f"{Fore.GREEN}✓ Results exported to {export_path}{Style.RESET_ALL}")
+        except Exception as e:
+            print(f"{Fore.RED}✗ AUTO MODE FAILED: {e}{Style.RESET_ALL}")
+            sys.exit(1)
+
+        sys.exit(0)
+
+    else:
+        app.run()
 
 
-# Standard Python idiom for running the script directly
 if __name__ == "__main__":
     main()

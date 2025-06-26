@@ -1,0 +1,126 @@
+{
+    "basic_statistics": {
+        "total_responses": 11,
+        "response_rate": "100%",
+        "column_count": 3,
+        "column_analysis": {
+            "csv": {
+                "name": "csv",
+                "total_values": 11,
+                "unique_values": 11,
+                "data_type": "categorical",
+                "most_common": [
+                    "comments",
+                    1
+                ],
+                "category_count": 11,
+                "frequency_distribution": {
+                    "comments": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Great service and friendly staff!": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Good overall experience": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Average service could be better": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Long wait times and poor service": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Excellent service highly recommend!": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Very good experience overall": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Good service friendly staff": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Okay experience nothing special": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Outstanding service will return": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    },
+                    "Below expectations needs improvement": {
+                        "count": 1,
+                        "percentage": "9.1%"
+                    }
+                }
+            },
+            "record_id": {
+                "name": "record_id",
+                "total_values": 11,
+                "unique_values": 11,
+                "data_type": "numeric",
+                "mean": 6.0,
+                "median": 6.0,
+                "mode": 1.0,
+                "std_dev": 3.32,
+                "min_value": 1.0,
+                "max_value": 11.0,
+                "range": 10.0
+            },
+            "is_valid": {
+                "name": "is_valid",
+                "total_values": 11,
+                "unique_values": 1,
+                "data_type": "categorical",
+                "most_common": [
+                    "True",
+                    11
+                ],
+                "category_count": 1,
+                "frequency_distribution": {
+                    "True": {
+                        "count": 11,
+                        "percentage": "100.0%"
+                    }
+                }
+            }
+        }
+    },
+    "response_patterns": {
+        "completion_rate": {
+            "csv": 100.0,
+            "record_id": 100.0,
+            "is_valid": 100.0
+        },
+        "response_consistency": {
+            "issues_found": 0,
+            "examples": []
+        },
+        "common_combinations": {
+            "note": "Common response combination analysis not implemented yet."
+        }
+    },
+    "satisfaction_analysis": {
+        "note": "No satisfaction-related columns found"
+    },
+    "demographic_breakdown": {
+        "note": "Demographic analysis not implemented yet."
+    },
+    "text_analysis": {
+        "note": "Text response analysis not implemented yet."
+    },
+    "data_quality": {
+        "completeness_rate": "100.0%",
+        "total_records": 11,
+        "missing_values": 0,
+        "data_quality_score": "Excellent",
+        "recommendations": []
+    }
+}

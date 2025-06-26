@@ -1,5 +1,0 @@
-{
-  "python.defaultInterpreterPath": "/Users/kidmellowgraphics/Documents/CODING/vscode-projects/survey-data-analyzer/.venv/bin/python",
-  "python.analysis.useLibraryCodeForTypes": true,
-  "python.languageServer": "Pylance"
-}
