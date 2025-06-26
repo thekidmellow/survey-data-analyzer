@@ -355,7 +355,7 @@ class DataVisualizer:
                 self._create_categorical_charts(analysis_results["categorical_analysis"])
         
             # Generate correlation heatmap
-            if "correlation_analysis" in analysis_results and "matrix" in analysis_results["correlation_analysis"]
+            if "correlation_analysis" in analysis_results and "matrix" in analysis_results["correlation_analysis"]:
                 self._create_correlation_heatmap(analysis_results["correlation_analysis"]["matrix"])
         
             # Generate summary dashboard
