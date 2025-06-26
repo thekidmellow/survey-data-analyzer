@@ -1,401 +1,144 @@
-from typing import List, Dict, Any, Tuple
-from collections import Counter, defaultdict
-import statistics
-from colorama import Fore, Style
-import re
-
+import pandas as pd
+from typing import List, Dict, Any
+import numpy as np
+from collections import Counter
 
 class SurveyAnalyzer:
-    """
-    Comprehensive survey data analysis engine.
-    """
-
+    """Handles statistical analysis of survey data."""
+    
     def __init__(self):
-        """
-        Initialize the Survey Analyzer with analysis configurations.
-        """
-        self.analysis_results = {}
-        self.numeric_threshold = 0.8
-
-    def analyze_dataset(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
-        if not data:
-            return {'error': 'No data provided for analysis'}
-
-        # Initialize comprehensive analysis results
-        analysis_results = {
-            'basic_statistics': self.calculate_basic_statistics(data),
-            'response_patterns': self.analyze_response_patterns(data),
-            'satisfaction_analysis': self.analyze_satisfaction_metrics(data),
-            'demographic_breakdown': self.analyze_demographics(data),
-            'text_analysis': self.analyze_text_responses(data),
-            'data_quality': self.assess_data_quality(data)
+        self.numeric_columns = []
+        self.categorical_columns = []
+    
+    def analyze_dataset(self, dataset: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Perform comprehensive analysis on the dataset."""
+        if not dataset:
+            raise ValueError("Dataset is empty")
+        
+        df = pd.DataFrame(dataset)
+        
+        # Identify column types
+        self._identify_column_types(df)
+        
+        results = {
+            "basic_info": self._get_basic_info(df),
+            "descriptive_statistics": self._get_descriptive_stats(df),
+            "categorical_analysis": self._analyze_categorical_data(df),
+            "correlation_analysis": self._analyze_correlations(df),
+            "response_patterns": self._analyze_response_patterns(df)
         }
-
-        # Store results for later use
-        self.analysis_results = analysis_results
-
-        return analysis_results
-
-    def calculate_basic_statistics(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Calculate basic statistical measures for the dataset.
-        """
-        stats = {
-            'total_responses': len(data),
-            'response_rate': '100%',
-            'column_count': len(data[0].keys()) if data else 0
-        }
-
-        column_stats = {}
-
-        for column in data[0].keys():
-            column_values = [record.get(column) for record in data if record.get(column) is not None]
-
-            if column_values:
-                column_info = self.analyze_column(column, column_values)
-                column_stats[column] = column_info
-
-        stats['column_analysis'] = column_stats
-        return stats
-
-    def analyze_column(self, column_name: str, values: List[Any]) -> Dict[str, Any]:
-
-        analysis = {
-            'name': column_name,
-            'total_values': len(values),
-            'unique_values': len(set(str(v) for v in values)),
-            'data_type': self.determine_data_type(values)
-        }
-
-        # Perform type-specific analysis using selection (LO3)
-        if analysis['data_type'] == 'numeric':
-            analysis.update(self.analyze_numeric_column(values))
-        elif analysis['data_type'] == 'categorical':
-            analysis.update(self.analyze_categorical_column(values))
-        elif analysis['data_type'] == 'text':
-            analysis.update(self.analyze_text_column(values))
-
-        return analysis
-
-    def determine_data_type(self, values: List[Any]) -> str:
-
-        if not values:
-            return 'unknown'
-
-        numeric_count = 0
-        text_length_total = 0
-
-        # Iterate through values to classify (LO3 - repetition)
-        for value in values:
-            try:
-                # Try to convert to number
-                float(str(value))
-                numeric_count += 1
-            except (ValueError, TypeError):
-                # Track text length for classification
-                text_length_total += len(str(value))
-
-        numeric_ratio = numeric_count / len(values)
-        avg_text_length = text_length_total / len(values) if values else 0
-
-        # Classification logic using selection (LO3)
-        if numeric_ratio >= self.numeric_threshold:
-            return 'numeric'
-        elif avg_text_length > 50:  # Arbitrary threshold for long text
-            return 'text'
-        else:
-            return 'categorical'
-
-    def analyze_numeric_column(self, values: List[Any]) -> Dict[str, Any]:
-
-        numeric_values = []
-        for value in values:
-            try:
-                numeric_values.append(float(value))
-            except (ValueError, TypeError):
-                continue
-
-        if not numeric_values:
-            return {'error': 'No valid numeric values found'}
-
+        
+        return results
+    
+    def _identify_column_types(self, df: pd.DataFrame):
+        """Identify numeric and categorical columns."""
+        self.numeric_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+        self.categorical_columns = df.select_dtypes(include=['object']).columns.tolist()
+    
+    def _get_basic_info(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """Get basic information about the dataset."""
         return {
-            'mean': round(statistics.mean(numeric_values), 2),
-            'median': round(statistics.median(numeric_values), 2),
-            'mode': self.safe_mode(numeric_values),
-            'std_dev': round(statistics.stdev(numeric_values), 2) if len(numeric_values) > 1 else 0,
-            'min_value': min(numeric_values),
-            'max_value': max(numeric_values),
-            'range': max(numeric_values) - min(numeric_values)
+            "total_responses": len(df),
+            "total_questions": len(df.columns),
+            "numeric_questions": len(self.numeric_columns),
+            "categorical_questions": len(self.categorical_columns),
+            "missing_values": df.isnull().sum().sum(),
+            "completion_rate": f"{((df.size - df.isnull().sum().sum()) / df.size * 100):.1f}%"
         }
-
-    def safe_mode(self, values: List[float]) -> float:
-
-        try:
-            return round(statistics.mode(values), 2)
-        except statistics.StatisticsError:
-            # Return mean when no unique mode exists
-            return round(statistics.mean(values), 2)
-
-    def analyze_categorical_column(self, values: List[Any]) -> Dict[str, Any]:
-        # Count frequency of each category
-        frequency_counter = Counter(str(v) for v in values)
-        total_count = len(values)
-
-        # Calculate percentages and sort by frequency
-        frequency_analysis = {}
-        for category, count in frequency_counter.most_common():
-            percentage = round((count / total_count) * 100, 1)
-            frequency_analysis[category] = {
-                'count': count,
-                'percentage': f"{percentage}%"
+    
+    def _get_descriptive_stats(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """Calculate descriptive statistics for numeric columns."""
+        if not self.numeric_columns:
+            return {"message": "No numeric columns found"}
+        
+        stats = {}
+        for col in self.numeric_columns:
+            stats[col] = {
+                "mean": round(df[col].mean(), 2),
+                "median": round(df[col].median(), 2),
+                "std_dev": round(df[col].std(), 2),
+                "min": df[col].min(),
+                "max": df[col].max(),
+                "count": df[col].count()
             }
-
+        return stats
+    
+    def _analyze_categorical_data(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """Analyze categorical columns."""
+        if not self.categorical_columns:
+            return {"message": "No categorical columns found"}
+        
+        categorical_analysis = {}
+        for col in self.categorical_columns:
+            value_counts = df[col].value_counts()
+            categorical_analysis[col] = {
+                "unique_values": len(value_counts),
+                "most_common": value_counts.index[0] if len(value_counts) > 0 else None,
+                "most_common_count": value_counts.iloc[0] if len(value_counts) > 0 else 0,
+                "distribution": value_counts.to_dict()
+            }
+        return categorical_analysis
+    
+    def _analyze_correlations(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """Calculate correlations between numeric variables."""
+        if len(self.numeric_columns) < 2:
+            return {"message": "Need at least 2 numeric columns for correlation analysis"}
+        
+        correlation_matrix = df[self.numeric_columns].corr()
+        
+        # Find strongest correlations
+        correlations = []
+        for i in range(len(correlation_matrix.columns)):
+            for j in range(i+1, len(correlation_matrix.columns)):
+                col1 = correlation_matrix.columns[i]
+                col2 = correlation_matrix.columns[j]
+                corr_value = correlation_matrix.iloc[i, j]
+                correlations.append({
+                    "variables": f"{col1} vs {col2}",
+                    "correlation": round(corr_value, 3),
+                    "strength": self._interpret_correlation(abs(corr_value))
+                })
+        
+        # Sort by absolute correlation value
+        correlations.sort(key=lambda x: abs(x["correlation"]), reverse=True)
+        
         return {
-            'most_common': frequency_counter.most_common(1)[0] if frequency_counter else None,
-            'category_count': len(frequency_counter),
-            'frequency_distribution': frequency_analysis
+            "correlations": correlations[:5],  # Top 5 correlations
+            "matrix": correlation_matrix.round(3).to_dict()
         }
-
-    def analyze_text_column(self, values: List[Any]) -> Dict[str, Any]:
-        text_values = [str(v) for v in values if v]
-
-        if not text_values:
-            return {'error': 'No text values found'}
-
-        # Calculate text statistics
-        lengths = [len(text) for text in text_values]
-        word_counts = [len(text.split()) for text in text_values]
-
-        return {
-            'average_length': round(statistics.mean(lengths), 1),
-            'average_word_count': round(statistics.mean(word_counts), 1),
-            'shortest_response': min(lengths),
-            'longest_response': max(lengths),
-            'total_words': sum(word_counts)
+    
+    def _interpret_correlation(self, abs_corr: float) -> str:
+        """Interpret correlation strength."""
+        if abs_corr >= 0.7:
+            return "Strong"
+        elif abs_corr >= 0.5:
+            return "Moderate"
+        elif abs_corr >= 0.3:
+            return "Weak"
+        else:
+            return "Very Weak"
+    
+    def _analyze_response_patterns(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """Analyze response patterns and identify insights."""
+        patterns = {}
+        
+        # Response completeness by respondent
+        completeness = df.isnull().sum(axis=1)
+        patterns["response_completeness"] = {
+            "fully_complete_responses": (completeness == 0).sum(),
+            "partially_complete_responses": ((completeness > 0) & (completeness < len(df.columns))).sum(),
+            "empty_responses": (completeness == len(df.columns)).sum()
         }
-
-    def analyze_response_patterns(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
-        patterns = {
-            'completion_rate': self.calculate_completion_rate(data),
-            'response_consistency': self.analyze_response_consistency(data),
-            'common_combinations': self.find_common_response_combinations(data)
-        }
-
+        
+        # Most and least engaged respondents (based on response completeness)
+        if "respondent_id" in df.columns:
+            df_with_completeness = df.copy()
+            df_with_completeness["completeness_score"] = 1 - (completeness / len(df.columns))
+            
+            patterns["engagement"] = {
+                "most_engaged": df_with_completeness.loc[df_with_completeness["completeness_score"].idxmax(), "respondent_id"] if len(df) > 0 else None,
+                "least_engaged": df_with_completeness.loc[df_with_completeness["completeness_score"].idxmin(), "respondent_id"] if len(df) > 0 else None,
+                "average_completeness": round(df_with_completeness["completeness_score"].mean(), 2)
+            }
+        
         return patterns
-
-    def find_common_response_combinations(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
-        return {
-            'note': 'Common response combination analysis not implemented yet.'
-        }
-
-    def analyze_response_consistency(
-            self,
-            data: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
-
-        issues = []
-        for i, record in enumerate(data):
-            for key, value in record.items():
-                if value is None or str(value).strip() == "":
-                    issues.append(
-                        f"Missing value in row {i+1}, column '{key}'"
-                    )
-
-        return {
-            'issues_found': len(issues),
-            'examples': issues[:5]  # Show only the first 5 issues for brevity
-        }
-
-    def calculate_completion_rate(
-            self,
-            data: List[Dict[str, Any]],
-    ) -> Dict[str, float]:
-        if not data:
-            return {}
-
-        total_responses = len(data)
-        completion_rates = {}
-
-        for column in data[0].keys():
-            completed_count = sum(
-                1 for record in data
-                if record.get(column) is not None
-                and record.get(column) != ''
-            )
-            completion_rate = round(
-                (completed_count / total_responses) * 100,
-                1
-            )
-            completion_rates[column] = completion_rate
-
-        return completion_rates
-
-    def analyze_satisfaction_metrics(
-            self,
-            data: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
-        satisfaction_keywords = [
-            'satisfaction', 'rating', 'score', 'recommend'
-        ]
-        satisfaction_results = {}
-
-        # Find satisfaction-related columns using pattern matching
-        satisfaction_columns = []
-        for column in data[0].keys() if data else []:
-            if any(keyword in str(column).lower()
-                    for keyword in satisfaction_keywords):
-                satisfaction_columns.append(column)
-
-        if not satisfaction_columns:
-            return {'note': 'No satisfaction-related columns found'}
-
-        # Analyze each satisfaction metric
-        for column in satisfaction_columns:
-            values = [
-                record.get(column)
-                for record in data
-                if record.get(column) is not None
-            ]
-            if values:
-                satisfaction_results[column] = self.analyze_satisfaction_column(
-                    column, values
-                )
-
-        return satisfaction_results
-
-    def analyze_satisfaction_column(
-            self,
-            column_name: str,
-            values: List[Any]
-    ) -> Dict[str, Any]:
-        analysis = {'column': column_name}
-
-        # Try numeric analysis first
-        numeric_values = []
-        for value in values:
-            try:
-                numeric_values.append(float(value))
-            except (ValueError, TypeError):
-                continue
-
-        if numeric_values:
-            # Numeric satisfaction analysis
-            analysis.update({
-                'average_score': round(statistics.mean(numeric_values), 2),
-                'satisfaction_level': self.categorize_satisfaction_score(
-                    statistics.mean(numeric_values)
-                ),
-                'distribution': self.create_satisfaction_distribution(
-                    numeric_values
-                )
-            })
-        else:
-            # Categorical satisfaction analysis
-            analysis.update({
-                'response_distribution': Counter(str(v) for v in values),
-                'most_common_response': (
-                    Counter(str(v) for v in values).most_common(1)[0]
-                    if values
-                    else None
-                )
-            })
-
-        return analysis
-
-    def categorize_satisfaction_score(self, score: float) -> str:
-        if score >= 8:
-            return "High Satisfaction"
-        elif score >= 6:
-            return "Moderate Satisfaction"
-        elif score >= 4:
-            return "Low Satisfaction"
-        else:
-            return "Poor Satisfaction"
-
-    def assess_data_quality(
-            self, data: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
-        if not data:
-            return {'error': 'No data to assess'}
-
-        total_records = len(data)
-        total_fields = len(data[0].keys()) if data else 0
-
-        # Count missing values across all records
-        missing_count = 0
-        for record in data:
-            for value in record.values():
-                if value is None or value == '':
-                    missing_count += 1
-
-        total_fields_count = total_records * total_fields
-        if total_fields_count > 0:
-            filled_fields = total_fields_count - missing_count
-            completeness_rate = round(
-                (filled_fields / total_fields_count) * 100,
-                1
-            )
-        else:
-            completeness_rate = 0
-
-        quality_assessment = {
-            'completeness_rate': f"{completeness_rate}%",
-            'total_records': total_records,
-            'missing_values': missing_count,
-            'data_quality_score': self.calculate_quality_score(
-                completeness_rate
-            ),
-            'recommendations': self.generate_quality_recommendations(
-                completeness_rate
-            )
-        }
-
-        return quality_assessment
-
-    def calculate_quality_score(self, completeness_rate: float) -> str:
-        if completeness_rate >= 95:
-            return "Excellent"
-        elif completeness_rate >= 85:
-            return "Good"
-        elif completeness_rate >= 70:
-            return "Fair"
-        else:
-            return "Poor"
-
-    def generate_quality_recommendations(
-        self, completeness_rate: float
-    ) -> List[str]:
-        recommendations = []
-
-        if completeness_rate < 95:
-            recommendations.append(
-                "Consider reviewing data collection methods to reduce missing "
-                "values"
-            )
-
-        if completeness_rate < 70:
-            recommendations.append(
-                "Implement data validation rules during collection"
-            )
-            recommendations.append(
-                "Consider making key questions required fields"
-            )
-            recommendations.append("Regularly monitor data quality metrics")
-
-        return recommendations
-
-    def analyze_demographics(
-        self, data: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
-
-        return {
-            'note': 'Demographic analysis not implemented yet.'
-        }
-
-    def analyze_text_responses(
-        self, data: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
-
-        return {
-            'note': 'Text response analysis not implemented yet.'
-        }

@@ -134,7 +134,6 @@ class SurveyDataApp:
         if not file_path.lower().endswith(".csv"):
             print(f"{Fore.YELLOW}Warning: File does not end with '.csv'. Proceeding anyway...{Style.RESET_ALL}")
 
-
         try:
             # Attempt to load data using the data manager
             self.current_dataset = self.data_manager.load_csv(file_path)
@@ -181,6 +180,19 @@ class SurveyDataApp:
             f"{Fore.GREEN}✓ Successfully recorded "
             f"{len(dataset)} manual entries{Style.RESET_ALL}"
             )
+        input("\nPress Enter to continue...")
+
+    def load_sample_data(self):
+        """Load sample survey data for testing."""
+        try:
+            self.current_dataset = self.data_manager.create_sample_data()
+            print(
+                f"{Fore.GREEN}✓ Successfully loaded sample dataset with "
+                f"{len(self.current_dataset)} records{Style.RESET_ALL}"
+            )
+        except Exception as e:
+            print(f"{Fore.RED}✗ Error loading sample data: {str(e)}{Style.RESET_ALL}")
+
         input("\nPress Enter to continue...")
 
     def analyze_data(self):
@@ -286,6 +298,46 @@ def main():
     """
     Entry point for the application. Supports both interactive and auto mode.
     """
+    # Check if running on Heroku
+    if os.environ.get('DYNO'):
+        print(f"{Fore.CYAN}🌐 Running on Heroku!{Style.RESET_ALL}")
+        print("Survey Data Analyzer is live and running!")
+
+        # Create app instance for Heroku
+        app = SurveyDataApp()
+
+        try:
+            # Load sample data and run analysis
+            app.current_dataset = app.data_manager.create_sample_data()
+            print(f"{Fore.GREEN}✓ Sample data loaded: {len(app.current_dataset)} records{Style.RESET_ALL}")
+
+        # Run analysis
+            app.analysis_results = app.analyzer.analyze_dataset(app.current_dataset)
+            print(f"{Fore.GREEN}✓ Analysis completed{Style.RESET_ALL}")
+
+            # Generate visualizations
+            app.visualizer.generate_visuals(app.analysis_results)
+            print(f"{Fore.GREEN}✓ Visualizations generated{Style.RESET_ALL}")
+
+            # Export results
+            app.data_manager.export_results(app.analysis_results, "heroku_analysis_results.json")
+            print(f"{Fore.GREEN}✓ Results exported{Style.RESET_ALL}")
+
+            print(f"\n{Fore.CYAN}🎉 Survey Data Analyzer successfully deployed on Heroku!{Style.RESET_ALL}")
+
+            # Keep the application running for Heroku
+            import time
+            while True:
+                time.sleep(60)
+                print("📡 Application running on Heroku...")
+
+        except Exception as e:
+            print(f"{Fore.RED}✗ Error in Heroku mode: {e}{Style.RESET_ALL}")
+            import time
+            time.sleep(10)
+
+        return
+
     app = SurveyDataApp()
 
     if "--auto" in sys.argv:

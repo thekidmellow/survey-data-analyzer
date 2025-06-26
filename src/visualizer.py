@@ -3,6 +3,11 @@ from collections import Counter
 import math
 from colorama import Fore, Style, Back
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import os
+
 
 class DataVisualizer:
     """
@@ -13,11 +18,18 @@ class DataVisualizer:
     """
 
     def __init__(self):
-        """
-        Initialize the Data Visualizer with display configurations.
+        self.output_dir = "visualizations"
+        self._create_output_directory()
 
-        Sets up formatting parameters and visualization settings.
-        """
+        # Set up matplotlib style
+        plt.style.use('default')
+        sns.set_palette("husl")
+
+    def _create_output_directory(self):
+        """Create output directory for visualizations."""
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+
         self.chart_width = 50
         self.bar_char = "█"
         self.colors = {
@@ -102,6 +114,17 @@ class DataVisualizer:
                 section += self.format_column_analysis(column, analysis)
 
         return section
+    
+    def _create_categorical_charts(self, categorical_analysis: Dict[str, Any]):
+        for var_name, var_data in categorical_analysis.items():
+            distribution = var_data["distribution"]
+            plt.figure(figsize=(8, 8))
+            plt.pie(distribution.values(), labels=distribution.keys(), autopct='%1.1f%%', startangle=90,
+                    colors=sns.color_palette("husl", len(distribution)))
+            plt.title(f'Distribution of {var_name}', fontsize=14, fontweight='bold')
+            plt.savefig(f'{self.output_dir}/categorical_{var_name.lower().replace(" ", "_")}.png',     dpi=300)
+            plt.close()
+
 
     def format_column_analysis(
             self, column_name: str, analysis: Dict[str, Any]) -> str:
@@ -138,29 +161,28 @@ class DataVisualizer:
 
         return section
 
-    def create_horizontal_bar_chart(
-            self, data: Dict[str, float], title: str) -> str:
+    def create_horizontal_bar_chart(self, data: Dict[str, float], title: str):
         if not data:
-            return "No data available for chart\n"
+            print("No data available for chart")
+            return
 
-        chart = f"\n{title}:\n"
+        variables = list(data.keys())
+        values = list(data.values())
 
-        # Find maximum value for scaling
-        max_value = max(data.values()) if data.values() else 1
+        plt.figure(figsize=(10, 6))
+        bars = plt.bar(variables, values, color='skyblue', alpha=0.7)
+        plt.title(title, fontsize=14, fontweight='bold')
+        plt.ylabel(title)
+        plt.xlabel('Categories')
+        plt.xticks(rotation=45, ha='right')
 
-        # Create bars for each data point using repetition (LO3)
-        for label, value in data.items():
-            # Calculate bar length proportional to chart width
-            bar_length = int((value / max_value) * self.chart_width) if max_value > 0 else 0
+        for bar, val in zip(bars, values):
+            plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
+                    f'{val:.1f}', ha='center', va='bottom')
 
-            # Create the bar using string repetition
-            bar = self.bar_char * bar_length
-
-            # Format the line with color coding based on value
-            color = self.get_value_color(value, max_value)
-            chart += f"  {label:<20} |{color}{bar:<{self.chart_width}}{Style.RESET_ALL}| {value}\n"
-
-        return chart
+        plt.tight_layout()
+        plt.savefig(f"{self.output_dir}/{title.lower().replace(' ', '_')}.png", dpi=300)
+        plt.close()
 
     def get_value_color(self, value: float, max_value: float) -> str:
         ratio = value / max_value if max_value > 0 else 0
@@ -318,6 +340,31 @@ class DataVisualizer:
         # Remove ANSI escape sequences
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         return ansi_escape.sub('', text)
+    
+    def generate_visuals(self, analysis_results: Dict[str, Any]):
+        """Generate all visualizations from analysis results."""
+        print("Generating visualizations...")
+    
+        try:
+            # Generate descriptive statistics charts
+            if "descriptive_statistics" in analysis_results:
+                self._create_descriptive_charts(analysis_results["descriptive_statistics"])
+        
+            # Generate categorical analysis charts
+            if "categorical_analysis" in analysis_results:
+                self._create_categorical_charts(analysis_results["categorical_analysis"])
+        
+            # Generate correlation heatmap
+            if "correlation_analysis" in analysis_results and "matrix" in analysis_results    ["correlation_analysis"]:
+                self._create_correlation_heatmap(analysis_results["correlation_analysis"]["matrix"])
+        
+            # Generate summary dashboard
+            self._create_summary_dashboard(analysis_results)
+        
+            print(f"Visualizations saved to '{self.output_dir}' directory")
+        
+        except Exception as e:
+            raise Exception(f"Error generating visualizations: {str(e)}")
 
 
 # Example usage
