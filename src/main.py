@@ -311,6 +311,7 @@ def main():
             app.current_dataset = app.data_manager.create_sample_data()
             print(f"{Fore.GREEN}✓ Sample data loaded: {len(app.current_dataset)} records{Style.RESET_ALL}")
 
+
         # Run analysis
             app.analysis_results = app.analyzer.analyze_dataset(app.current_dataset)
             print(f"{Fore.GREEN}✓ Analysis completed{Style.RESET_ALL}")
