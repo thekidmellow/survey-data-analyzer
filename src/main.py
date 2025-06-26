@@ -130,7 +130,7 @@ class SurveyDataApp:
         if not file_path:
             print(f"{Fore.YELLOW}No file path provided.{Style.RESET_ALL}")
             return
-        
+
         if not file_path.lower().endswith(".csv"):
             print(f"{Fore.YELLOW}Warning: File does not end with '.csv'. Proceeding anyway...{Style.RESET_ALL}")
 
@@ -234,7 +234,7 @@ class SurveyDataApp:
         Display analysis results...
         """
         import json
-        
+
         print(f"{Fore.GREEN}ANALYSIS RESULTS:{Style.RESET_ALL}")
         print("=" * 50)
 
