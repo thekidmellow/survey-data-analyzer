@@ -1,0 +1,35 @@
+{
+"name": "Survey Data Analyzer",
+"description": "A Python command-line application for analyzing survey data with statistical insights and visualizations",
+"repository": "https://github.com/yourusername/survey-insights-cli",
+"logo": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+"keywords": [
+    "python",
+    "data-analysis",
+    "survey",
+    "statistics",
+    "visualization",
+    "pandas",
+    "matplotlib"
+],
+"image": "heroku/python",
+"stack": "heroku-22",
+"buildpacks": [
+    {
+        "url": "heroku/python"
+    }
+],
+"env": {
+    "PYTHONPATH": {
+        "description": "Python path for the application",
+        "value": "."
+    }
+},
+"formation": {
+    "web": {
+        "quantity": 1,
+        "size": "eco"
+    }
+},
+"addons": []
+}
