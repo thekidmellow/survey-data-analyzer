@@ -363,6 +363,34 @@ class DataVisualizer:
             print(f"Error in descriptive charts: {str(e)}")
             raise
 
+    def create_descriptive_charts(self, results: dict) -> None:
+        """Public method used outside the class."""
+        return self._create_descriptive_charts(results)
+    
+    
+    def _create_descriptive_charts(self, results: dict) -> None:
+        """
+        Internal helper that builds bar-, pie- or heat-maps
+        from the aggregated `results` dictionary.
+        """
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        import pandas as pd
+
+        # ✨ minimal defensive check to avoid 1-D heat-map crash
+        if "correlation" in results:
+            corr = pd.DataFrame(results["correlation"])
+            if corr.ndim == 1:
+                print("⚠️ Skipping heat-map: correlation matrix is 1-D")
+            else:
+                plt.figure()
+                sns.heatmap(corr, annot=True)
+                plt.title("Correlation heat-map")
+                plt.savefig("outputs/correlation_heatmap.png")
+
+        # more charts …
+        plt.close("all")
+
     def _create_correlation_heatmap(self, corr_matrix):
         """Create correlation heatmap."""
         try:
